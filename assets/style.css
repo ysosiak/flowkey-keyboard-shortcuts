@@ -1,0 +1,35 @@
+.main-controls [data-keyboardshortcut], .play-button {
+    position: relative;
+}
+
+.main-controls [data-keyboardshortcut]::after, .play-button::after {
+    content: attr(data-keyboardshortcut);
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    padding: 1px;
+    background: #eb7f00;
+    border: 1px solid #676d73;
+    color: #fff;
+    text-align: center;
+    font: 14px Arial, sans-serif;
+    font-size: 13px;
+}
+
+.play-button::after {
+    content: 'space';
+    width: 38px;
+    content: 'space';
+    height: 16px;
+    left: 9px;
+    top: -3px;
+}
+
+button[data-keyboardshortcut][data-testid="PrimaryButton"]:first-letter,
+  [data-keyboardshortcut].button:first-letter {
+    text-decoration: underline;
+}
