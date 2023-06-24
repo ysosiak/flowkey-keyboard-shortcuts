@@ -40,8 +40,12 @@ const handleButtonClick = (buttonToClick: HTMLElement, event: KeyboardEvent): vo
 }
 
 document.addEventListener('keyup', async (event) => {
+  if (event.target instanceof HTMLInputElement) {
+    // skip executing hotkeys when inputting text
+    return;
+  }
   const keyPressed = event.key.toUpperCase();
-  const buttonToClick = document.querySelector<HTMLElement>(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${keyPressed}"]`);
+  const buttonToClick = document.querySelector<HTMLElement>(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${keyPressed}"]:not(.hidden)`);
   if (buttonToClick != null) {
     const mainControls = buttonToClick.closest<HTMLDivElement>('.main-controls');
     if (mainControls != null) {
@@ -52,14 +56,13 @@ document.addEventListener('keyup', async (event) => {
   }
 });
 
-// assigns key unless the key is already assigned to another element
 const assignKeyShortcut = (element: HTMLElement, key: string) => {
-  if (document.querySelector(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${key}"]`) == null) {
-    element.setAttribute(KEYBOARD_SHORTCUT_ATTRIBUTE, key);
-    element.setAttribute('title', `Or press '${key}' on your keyboard`);
-  } else {
+  const existingElementWithHotkey = document.querySelector(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${key}"]`);
+  if (existingElementWithHotkey != null && existingElementWithHotkey !== element) {
     console.warn('got a conflict when assigning a keyboard shortcut', element);
   }
+  element.setAttribute(KEYBOARD_SHORTCUT_ATTRIBUTE, key);
+  element.setAttribute('title', `Or press '${key}' on your keyboard`);
 }
 
 const assignMainControlsKeyboardShortcuts = (mainControls: HTMLElement) => {
@@ -91,7 +94,7 @@ const assignMainControlsKeyboardShortcuts = (mainControls: HTMLElement) => {
   }
 }
 
-const assignButtonKeyboardShortcut = (button: HTMLButtonElement | HTMLDivElement) => {
+const assignButtonKeyboardShortcut = (button: HTMLButtonElement | HTMLDivElement | HTMLElement) => {
   const buttonTitle = button.innerText;
   if (buttonTitle.length > 0) {
     const key = button.innerText[0].toUpperCase();
@@ -110,12 +113,20 @@ const observer = new MutationObserver((mutationList, _) => {
             assignMainControlsKeyboardShortcuts(addedNode);
           } else if ([...addedNode.classList.values()].some(className => className.startsWith('css-'))) {
             addedNode.querySelectorAll<HTMLButtonElement>('button[data-testid="PrimaryButton"]').forEach((button) => {
-              assignButtonKeyboardShortcut(button)
+              assignButtonKeyboardShortcut(button);
             });
           } else if (addedNode.classList.contains('learnstep-notification') || addedNode.classList.contains('centered-children')) {
             addedNode.querySelectorAll<HTMLDivElement>('.buttons > div.button').forEach((button) => {
-              assignButtonKeyboardShortcut(button)
+              assignButtonKeyboardShortcut(button);
             });
+          }
+        } else if (addedNode.nodeType === Node.TEXT_NODE && mutation.target instanceof HTMLDivElement) {
+          const { target } = mutation;
+          // Primary button text has been updated
+          if (target.classList.contains('primary-button')) {
+            assignButtonKeyboardShortcut(mutation.target);
+          } else if (target.parentElement?.parentElement?.getAttribute("data-testid") === 'PrimaryButton') {
+            assignButtonKeyboardShortcut(target.parentElement.parentElement);
           }
         }
       }
