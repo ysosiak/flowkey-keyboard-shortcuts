@@ -14,5 +14,5 @@ watch:
 clean:
 	rm -rf build/
 
-zip-for-publishing: ${ZIP_OUT_FILENAME}
+zip-for-publishing:
 	zip ${ZIP_OUT_FILENAME} -FSr build assets/ manifest.json
