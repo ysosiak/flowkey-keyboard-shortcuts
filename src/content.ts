@@ -3,8 +3,6 @@ const KEYBOARD_SHORTCUT_ATTRIBUTE = 'data-keyboardshortcut';
 
 const sleep = async(ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
-const isDigit = (s: string): boolean =>/^\d$/.test(s);
-
 const animateButtonClick = async (
   button: HTMLElement,
 ): Promise<void> => {
@@ -59,7 +57,7 @@ document.addEventListener('keyup', async (event) => {
 const assignKeyShortcut = (element: HTMLElement, key: string) => {
   const existingElementWithHotkey = document.querySelector(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${key}"]`);
   if (existingElementWithHotkey != null && existingElementWithHotkey !== element) {
-    console.warn('got a conflict when assigning a keyboard shortcut', element);
+    console.warn(`conflict when assigning a keyboard shortcut: "${key}"`);
   }
   element.setAttribute(KEYBOARD_SHORTCUT_ATTRIBUTE, key);
   element.setAttribute('title', `Or press '${key}' on your keyboard`);
@@ -112,7 +110,7 @@ const observer = new MutationObserver((mutationList, _) => {
           if (addedNode.classList.contains('main-controls') && addedNode instanceof HTMLElement) {
             assignMainControlsKeyboardShortcuts(addedNode);
           } else if ([...addedNode.classList.values()].some(className => className.startsWith('css-'))) {
-            addedNode.querySelectorAll<HTMLButtonElement>('button[data-testid="PrimaryButton"]').forEach((button) => {
+            addedNode.querySelectorAll<HTMLButtonElement>('button[data-testid]').forEach((button) => {
               assignButtonKeyboardShortcut(button);
             });
           } else if (addedNode.classList.contains('learnstep-notification') || addedNode.classList.contains('centered-children')) {
@@ -125,7 +123,7 @@ const observer = new MutationObserver((mutationList, _) => {
           // Primary button text has been updated
           if (target.classList.contains('primary-button')) {
             assignButtonKeyboardShortcut(mutation.target);
-          } else if (target.parentElement?.parentElement?.getAttribute("data-testid") === 'PrimaryButton') {
+          } else if (target.parentElement?.parentElement?.hasAttribute("data-testid")) {
             assignButtonKeyboardShortcut(target.parentElement.parentElement);
           }
         }
