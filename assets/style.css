@@ -29,7 +29,7 @@
     top: -3px;
 }
 
-button[data-keyboardshortcut][data-testid="PrimaryButton"]:first-letter,
+button[data-keyboardshortcut][data-testid]:first-letter,
   [data-keyboardshortcut].button:first-letter {
     text-decoration: underline;
 }

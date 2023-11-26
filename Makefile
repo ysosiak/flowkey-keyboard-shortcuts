@@ -11,6 +11,9 @@ build: clean
 watch:
 	${TSC} -w
 
+lint:
+	npx eslint .
+
 clean:
 	rm -rf build/
 
