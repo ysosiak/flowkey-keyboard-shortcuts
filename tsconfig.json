@@ -2,12 +2,14 @@
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
         "target": "es2022",
-        "outDir": "./build"
+        "outDir": "./build",
+        "inlineSourceMap": true,
+        "inlineSources": true,
     },
     "include": [
         "src/**/*"
     ],
     "watchOptions": {
         "watchDirectory": "fixedPollingInterval"
-    }
+    },
 }

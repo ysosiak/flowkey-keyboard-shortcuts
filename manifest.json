@@ -1,7 +1,7 @@
 {
   "name": "Flowkey Keyboard Shortcuts",
   "description": "Flowkey Keyboard Shortcuts are a great way to quickly navigate through Flowkey and cut down on your clicks",
-  "version": "0.2",
+  "version": "0.3",
   "manifest_version": 3,
   "permissions": [],
   "host_permissions": [

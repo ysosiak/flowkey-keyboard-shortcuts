@@ -1,8 +1,10 @@
-.main-controls [data-keyboardshortcut], .play-button {
+.main-controls [data-keyboardshortcut],
+.play-button {
     position: relative;
 }
 
-.main-controls [data-keyboardshortcut]::after, .play-button::after {
+.main-controls [data-keyboardshortcut]::after,
+.play-button::after {
     content: attr(data-keyboardshortcut);
     display: block;
     position: absolute;
@@ -30,6 +32,58 @@
 }
 
 button[data-keyboardshortcut][data-testid]:first-letter,
-  [data-keyboardshortcut].button:first-letter {
+[data-keyboardshortcut].button:first-letter {
     text-decoration: underline;
+}
+
+#sheet-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    z-index: 1;
+    padding: 50px 20px;
+    text-align: center;
+    box-shadow: #999 0 0 6px 4px;
+    border-radius: 3px;
+    margin: 20px;
+}
+
+.close-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.3;
+    cursor: pointer;
+    transition: 100ms;
+}
+
+.close-button:hover {
+    opacity: 1;
+}
+
+.close-button:before,
+.close-button:after {
+    position: absolute;
+    left: 12px;
+    content: ' ';
+    height: 24px;
+    width: 2px;
+    background-color: #333;
+}
+
+.close-button:before {
+    transform: rotate(45deg);
+}
+
+.close-button:after {
+    transform: rotate(-45deg);
+}
+
+@media print {
+    #sheet-view {
+        display: none;
+    }
 }

@@ -8,6 +8,8 @@ module.exports = {
         "browser": true
     },
     rules: {
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
-    }
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/no-shadow": ["warn"],
+    },
+    ignorePatterns: ["build"],
 };
