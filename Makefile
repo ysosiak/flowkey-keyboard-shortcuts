@@ -8,6 +8,9 @@ setup:
 build: clean
 	${TSC}
 
+build-production: clean
+	${TSC} --project tsconfig.production.json
+
 watch:
 	${TSC} -w
 
@@ -16,6 +19,8 @@ lint:
 
 clean:
 	rm -rf build/
+	rm -f ${ZIP_OUT_FILENAME}
 
-zip-for-publishing:
-	zip ${ZIP_OUT_FILENAME} -FSr build assets/ manifest.json
+build-and-zip-for-publishing: build-production
+	zip ${ZIP_OUT_FILENAME} -FSr build/ assets/ manifest.json;
+	echo "\nCreated ${ZIP_OUT_FILENAME}"
