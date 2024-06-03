@@ -12,16 +12,27 @@ const animateButtonClick = async (
   button.style.removeProperty('transform');
 };
 
-const handleMainControlClick = (
+const getKeyState = (key: string): boolean => {
+  const state = JSON.parse(localStorage.getItem('key-states') ?? '{}');
+  return state[key] ?? false;
+}
+
+const setKeyState = (key: string, active: boolean): void => {
+  const state = JSON.parse(localStorage.getItem('key-states') ?? '{}');
+  state[key] = active;
+  localStorage.setItem('key-states', JSON.stringify(state));
+}
+
+const clickMainControlButton = (
   mainControls: HTMLElement,
   buttonToClick: HTMLElement,
-  event: KeyboardEvent,
+  eventKey: string,
 ): boolean => {
   const modeTabBar = buttonToClick.closest<HTMLElement>('.mode-tab-bar');
   // skip if the element is not visible
   if (!(mainControls.style.opacity !== '0') ||
     modeTabBar != null && !modeTabBar.classList.contains('visible')) {
-    console.log(`ignoring ${event.key} due to element visibility`);
+    console.log(`ignoring ${eventKey} due to element visibility`);
     return false;
   }
 
@@ -29,13 +40,13 @@ const handleMainControlClick = (
   return true;
 }
 
-const handleButtonClick = (buttonToClick: HTMLElement, event: KeyboardEvent): boolean => {
+const clickButton = (buttonToClick: HTMLElement, eventKey: string): boolean => {
   const mainControls = buttonToClick.closest<HTMLDivElement>('.main-controls')
   if (mainControls != null) {
-    return handleMainControlClick(mainControls, buttonToClick, event);
+    return clickMainControlButton(mainControls, buttonToClick, eventKey);
   } else {
     if (buttonToClick.classList.contains('hidden') || buttonToClick.closest('.hidden') != null) {
-      console.log(`ignoring ${event.key} due to button visibility`);
+      console.log(`ignoring ${eventKey} due to button visibility`);
       return false;
     }
 
@@ -97,8 +108,8 @@ document.addEventListener('keyup', async (event): Promise<void> => {
   const keyPressed = event.key.toUpperCase();
   const buttonCandidates = document.querySelectorAll<HTMLElement>(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${keyPressed}"]:not(.hidden)`);
   for (const buttonToClick of buttonCandidates) {
-    if (handleButtonClick(buttonToClick, event)) {
-      // terminate if clicked
+    if (clickButton(buttonToClick, keyPressed)) {
+    // terminate if clicked
       return;
     }
   }
@@ -109,25 +120,35 @@ document.addEventListener('keyup', async (event): Promise<void> => {
   }
 });
 
-const assignKeyShortcut = (element: HTMLElement, key: string) => {
+const assignKeyShortcut = (element: HTMLElement, key: string, trackState = false) => {
   const existingElementWithHotkey = document.querySelector(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${key}"]`);
   if (existingElementWithHotkey != null && existingElementWithHotkey !== element) {
     console.info(`conflict when assigning a keyboard shortcut: "${key}"`, element);
   }
   element.setAttribute(KEYBOARD_SHORTCUT_ATTRIBUTE, key);
   element.setAttribute('title', `Or press '${key}' on your keyboard`);
+
+  if (trackState) {
+    element.addEventListener(
+      'click',
+      () => setKeyState(key, element.classList.contains('selected')),
+    );
+    if (getKeyState(key)) {
+      element.click();
+    }
+  }
 }
 
 const assignMainControlsKeyboardShortcuts = (mainControls: HTMLElement) => {
   if (mainControls != null) {
     const leftHandButton = mainControls.querySelector('.hand-button .icon-hand-left')?.parentElement;
     if (leftHandButton != null) {
-      assignKeyShortcut(leftHandButton, 'L');
+      assignKeyShortcut(leftHandButton, 'L', true);
     }
 
     const rightHandButton = mainControls.querySelector('.hand-button .icon-hand-right')?.parentElement;
     if (rightHandButton != null) {
-      assignKeyShortcut(rightHandButton, 'R');
+      assignKeyShortcut(rightHandButton, 'R', true);
     }
 
     const flowModeButton = mainControls.querySelector('.icon-flow-mode')?.parentElement;
