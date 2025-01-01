@@ -2,6 +2,9 @@ const CLICK_DELAY_MS = 70;
 const KEYBOARD_SHORTCUT_ATTRIBUTE = 'data-keyboardshortcut';
 const SHEET_VIEW_ID = 'sheet-view';
 
+// Enable "L" and "R" keyboard shortcuts for the hand buttons by default
+const DEFAULT_KEY_STATE = true;
+
 const sleep = async (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
 const animateButtonClick = async (
@@ -14,7 +17,7 @@ const animateButtonClick = async (
 
 const getKeyState = (key: string): boolean => {
   const state = JSON.parse(sessionStorage.getItem('key-states') ?? '{}');
-  return state[key] ?? false;
+  return state[key] ?? DEFAULT_KEY_STATE;
 }
 
 const setKeyState = (key: string, active: boolean): void => {
@@ -80,7 +83,7 @@ const toggleSheetView = (): boolean => {
 
     // Add images
     sheetImages.forEach((image) => {
-      const imageUrlMatch = image.computedStyleMap().get('background-image')?.toString().match(/(https:\/\/.*)"\)/);
+      const imageUrlMatch = image.computedStyleMap().get('background-image')?.toString().match(/(https?:\/\/.*)"\)/);
       const imageUrl = imageUrlMatch?.[1];
       if (imageUrl != null) {
         const sheetImage = document.createElement('img');
