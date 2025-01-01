@@ -3,7 +3,7 @@
     position: relative;
 }
 
-.main-controls [data-keyboardshortcut]::after,
+.main-controls [data-keyboardshortcut]:not(.player-close-button)::after,
 .play-button::after {
     content: attr(data-keyboardshortcut);
     display: block;

@@ -77,8 +77,7 @@ const toggleSheetView = (): boolean => {
     // Add close button
     const closeButton = document.createElement('div');
     closeButton.classList.add('close-button');
-    closeButton.addEventListener('click', () => sheetView.remove());
-    assignKeyShortcut(closeButton, 'ESCAPE');
+    closeButton.addEventListener('click', toggleSheetView);
     sheetView.appendChild(closeButton);
 
     // Add images
@@ -109,6 +108,16 @@ document.addEventListener('keyup', async (event): Promise<void> => {
   }
 
   const keyPressed = event.key.toUpperCase();
+
+  if (keyPressed === 'ESCAPE') {
+    // close the sheet view if it is open, otherwise continue
+    const existingSheetView = document.getElementById(SHEET_VIEW_ID);
+    if (existingSheetView != null) {
+      toggleSheetView();
+      return;
+    }
+  }
+
   // make sure the modifier keys are not pressed
   if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
     const buttonCandidates = document.querySelectorAll<HTMLElement>(`[${KEYBOARD_SHORTCUT_ATTRIBUTE}="${keyPressed}"]:not(.hidden)`);
@@ -170,6 +179,11 @@ const assignMainControlsKeyboardShortcuts = (mainControls: HTMLElement) => {
     const fastModeButton = mainControls.querySelector('.icon-fast-mode')?.parentElement;
     if (fastModeButton != null) {
       assignKeyShortcut(fastModeButton, '7');
+    }
+
+    const closePlayerButton = mainControls.querySelector('.player-close-button');
+    if (closePlayerButton != null) {
+      assignKeyShortcut(closePlayerButton as HTMLElement, 'ESCAPE');
     }
   }
 }
