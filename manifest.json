@@ -1,14 +1,21 @@
 {
   "name": "Flowkey Keyboard Shortcuts",
   "description": "Flowkey Keyboard Shortcuts are a great way to quickly navigate through Flowkey and cut down on your clicks",
-  "version": "0.3",
+  "version": "0.4",
   "manifest_version": 3,
   "permissions": [],
   "host_permissions": [
-      "https://app.flowkey.com/"
+      "https://app.flowkey.com/",
+      "http://localhost:3000/"
   ],
   "content_scripts": [{
-    "matches": ["https://app.flowkey.com/*"],
+    "matches": [
+      "https://app.flowkey.com/*",
+      "http://localhost:3000/*",
+      "https://pi.hole:5000/*",
+      "https://pi:5000/*",
+      "https://flowkey.local:5000/*"
+    ],
     "js": ["build/content.js"],
     "css": ["assets/style.css"],
     "run_at": "document_idle"
